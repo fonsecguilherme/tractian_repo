@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tractian_application/presentation/home_page.dart';
+import 'package:tractian_application/presentation/home_page/home_page.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
