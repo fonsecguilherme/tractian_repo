@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tractian_application/domain/companies_repository.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import 'package:tractian_application/presentation/home_page/store/home_page_store.dart';
+import 'package:tractian_application/presentation/home_page/widgets/home_page_success_widget.dart';
 
 import 'home_page_state.dart';
 
@@ -12,54 +14,41 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  HomePageStore store = HomePageStore(repository: CompaniesRepository());
-
-  // void loadData() async {
-  //   companies = await repo.getCompanies();
-
-  //   setState(() {
-  //     companies;
-  //   });
-  // }
-
   @override
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPersistentFrameCallback(
-      (_) async => await store.getCompanies(),
-    );
-    // loadData();
+    context.read<HomePageStore>().getCompanies();
   }
 
   @override
   Widget build(BuildContext context) {
+    final store = context.watch<HomePageStore>();
+
+    final state = store.value;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Tractian',
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
+        title: SvgPicture.asset('assets/icons/logo.svg'),
         backgroundColor: const Color(0xFF17192D),
       ),
-      body: ValueListenableBuilder(
-        valueListenable: store,
-        builder: (context, value, child) {
-          if (value is ErrorHomePageState) {
-            return Center(child: Text(value.errorMessage));
-          } else if (value is FetchedHomePagestate) {
-            return const Center(
-              child: Text('Success'),
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
+      body: _buildBody(state),
     );
+  }
+
+  Widget _buildBody(HomePageState state) {
+    if (state is ErrorHomePageState) {
+      return Center(
+        child: Text(state.errorMessage),
+      );
+    } else if (state is FetchedHomePagestate) {
+      return HomePageSuccessWidget(
+        companies: state.companies,
+      );
+    } else {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
   }
 }
