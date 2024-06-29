@@ -32,30 +32,43 @@ class _AssetPageState extends State<AssetPage> {
     final state = store.value;
 
     return Scaffold(
-        appBar: AppBar(
-          iconTheme: const IconThemeData(
+      appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+        backgroundColor: const Color(0xff17192D),
+        title: const Text(
+          'Assets',
+          style: TextStyle(
             color: Colors.white,
-          ),
-          backgroundColor: const Color(0xff17192D),
-          title: const Text(
-            'Assets',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w400,
-            ),
+            fontSize: 18,
+            fontWeight: FontWeight.w400,
           ),
         ),
-        body: _buildBody(state));
+      ),
+      body: _buildBody(
+        state,
+        widget.company,
+        store,
+      ),
+    );
   }
 
-  Widget _buildBody(AssetPageState state) {
+  Widget _buildBody(
+    AssetPageState state,
+    CompanyModel company,
+    AssetPageStore store,
+  ) {
     if (state is ErrorAssetPageState) {
       return Center(
         child: Text(state.errorMessage),
       );
     } else if (state is FetchedAssetPageState) {
-      return const AssetPageSuccessWidget();
+      return AssetPageSuccessWidget(
+        company: company,
+        assets: state.assets,
+        store: store,
+      );
     } else {
       return const Center(
         child: CircularProgressIndicator(),
