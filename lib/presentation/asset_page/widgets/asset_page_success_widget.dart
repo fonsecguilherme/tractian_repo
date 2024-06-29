@@ -28,11 +28,23 @@ class _AssetPageSuccessWidgetState extends State<AssetPageSuccessWidget> {
   String searchQuery = '';
   bool sensor = false;
   bool isCritic = false;
+  List<AssetModel> filteredAssets = [];
 
   @override
   void initState() {
     super.initState();
     groupedAssets = widget.store.groupAssetsByParentID(widget.assets);
+  }
+
+  void _filterAssets() {
+    setState(() {
+      filteredAssets = widget.store.filterAssets(
+        widget.assets,
+        searchQuery,
+        sensor,
+        isCritic,
+      );
+    });
   }
 
   @override
@@ -61,6 +73,7 @@ class _AssetPageSuccessWidgetState extends State<AssetPageSuccessWidget> {
                   onChanged: (value) {
                     setState(() {
                       searchQuery = value;
+                      _filterAssets();
                     });
                   },
                   decoration: const InputDecoration(
@@ -84,6 +97,7 @@ class _AssetPageSuccessWidgetState extends State<AssetPageSuccessWidget> {
                     title: 'Sensor de Energia',
                     onTap: () => setState(() {
                       sensor = !sensor;
+                      _filterAssets();
                     }),
                     isTapped: sensor,
                   ),
@@ -92,6 +106,7 @@ class _AssetPageSuccessWidgetState extends State<AssetPageSuccessWidget> {
                     title: 'Crítico',
                     onTap: () => setState(() {
                       isCritic = !isCritic;
+                      _filterAssets();
                     }),
                     isTapped: isCritic,
                   ),
