@@ -23,8 +23,7 @@ class AssetPageStore extends ValueNotifier<AssetPageState> {
     }
   }
 
-
-    Map<String, List<AssetModel>> groupAssetsByParentID(List<AssetModel> assets) {
+  Map<String, List<AssetModel>> groupAssetsByParentID(List<AssetModel> assets) {
     Map<String, List<AssetModel>> groupedAssets = {};
     for (var asset in assets) {
       if (groupedAssets[asset.parentId] == null) {
@@ -35,7 +34,19 @@ class AssetPageStore extends ValueNotifier<AssetPageState> {
     return groupedAssets;
   }
 
-   List<AssetModel> filterAssets(
+  Map<String, List<AssetModel>> groupAssets(List<AssetModel> assets) {
+    var groupedAssets = <String, List<AssetModel>>{};
+    for (var asset in assets) {
+      var parentId = asset.parentId ?? '';
+      if (!groupedAssets.containsKey(parentId)) {
+        groupedAssets[parentId] = [];
+      }
+      groupedAssets[parentId]!.add(asset);
+    }
+    return groupedAssets;
+  }
+
+  List<AssetModel> filterAssets(
       List<AssetModel> assets, String query, bool sensor, bool isCritic) {
     return assets.where((asset) {
       bool matchesQuery =
@@ -46,4 +57,18 @@ class AssetPageStore extends ValueNotifier<AssetPageState> {
     }).toList();
   }
 
+  SensorStatus sensorStatus({required String status}) {
+    switch (status) {
+      case 'alert':
+        return SensorStatus.alert;
+
+      case 'operating':
+        return SensorStatus.operating;
+
+      default:
+        return SensorStatus.none;
+    }
+  }
 }
+
+enum SensorStatus { alert, operating, none }

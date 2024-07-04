@@ -56,90 +56,108 @@ class _AssetPageSuccessWidgetState extends State<AssetPageSuccessWidget> {
     List<AssetModel> rootAssets =
         filteredAssets.where((asset) => asset.parentId == null).toList();
 
-    return Column(
-      children: <Widget>[
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xffEAEFF3),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                height: 32,
-                child: TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      searchQuery = value;
-                      _filterAssets();
-                    });
-                  },
-                  decoration: const InputDecoration(
-                    hintStyle: TextStyle(fontSize: 17),
-                    hintText: 'Buscar Ativo ou Local',
-                    prefixIcon: Icon(Icons.search),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.only(left: 8, bottom: 10),
-                  ),
-                  style: const TextStyle(
-                    fontSize: 40.0,
-                    height: 2.0,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8.0),
-              Row(
+    return NestedScrollView(
+      headerSliverBuilder: (
+        BuildContext context,
+        bool innerBoxIsScrolled,
+      ) {
+        return [
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
                 children: [
-                  CustomButtonWidget(
-                    title: 'Sensor de Energia',
-                    onTap: () => setState(() {
-                      sensor = !sensor;
-                      _filterAssets();
-                    }),
-                    isTapped: sensor,
+                  TextField(
+                    decoration: const InputDecoration(
+                      hintStyle: TextStyle(fontSize: 17),
+                      hintText: 'Buscar Ativo ou Local',
+                      prefixIcon: Icon(Icons.search),
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.only(left: 8, bottom: 10),
+                    ),
+                    onChanged: (query) {
+                      setState(() {
+                        searchQuery = query;
+                        _filterAssets();
+                      });
+                    },
                   ),
-                  const SizedBox(width: 8),
-                  CustomButtonWidget(
-                    title: 'Crítico',
-                    onTap: () => setState(() {
-                      isCritic = !isCritic;
-                      _filterAssets();
-                    }),
-                    isTapped: isCritic,
+                  const SizedBox(height: 8.0),
+                  Row(
+                    children: [
+                      CustomButtonWidget(
+                        title: 'Sensor de Energia',
+                        onTap: () {
+                          setState(() {
+                            sensor = !sensor;
+                            _filterAssets();
+                          });
+                        },
+                        isTapped: sensor,
+                      ),
+                      const SizedBox(width: 8),
+                      CustomButtonWidget(
+                        title: 'Crítico',
+                        onTap: () {
+                          setState(() {
+                            isCritic = !isCritic;
+                            _filterAssets();
+                          });
+                        },
+                        isTapped: isCritic,
+                      ),
+                    ],
                   ),
+                  const SizedBox(
+                    height: 16.0,
+                  ),
+                  const Divider(),
+                  Row(
+                    children: <Widget>[
+                      const Icon(Icons.arrow_drop_down_outlined),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: SvgPicture.asset(
+                          'assets/icons/enviroment.svg',
+                          width: 15.28,
+                          height: 19.56,
+                        ),
+                      ),
+                      Text(widget.company.name)
+                    ],
+                  )
                 ],
-              )
-            ],
-          ),
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                ExpansionTile(
-                  title: Text(
-                    widget.company.name,
-                  ),
-                  leading: SvgPicture.asset(
-                    'assets/icons/enviroment.svg',
-                    width: 15.28,
-                    height: 19.56,
-                  ),
-                  children: rootAssets.map((rootAsset) {
-                    return AssetTreeNode(
-                      asset: rootAsset,
-                      groupedAssets: filteredGroupedAssets,
-                    );
-                  }).toList(),
-                ),
-              ],
+              ),
             ),
           ),
+        ];
+      },
+      body: Padding(
+        padding: const EdgeInsets.only(left: 16.0),
+        child: CustomScrollView(
+          slivers: [
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  if (index >= rootAssets.length) {
+                    return null;
+                  }
+                  var asset = rootAssets.elementAt(index);
+
+                  return AssetTreeNode(
+                    asset: asset,
+                    status: widget.store.sensorStatus(
+                      status: asset.status ?? '',
+                    ),
+                    groupedAssets: filteredGroupedAssets,
+                  );
+                },
+                childCount: filteredAssets.length,
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

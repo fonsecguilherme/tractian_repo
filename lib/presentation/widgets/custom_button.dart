@@ -28,11 +28,16 @@ class CustomButtonWidget extends StatelessWidget {
         ),
         child: Row(
           children: <Widget>[
-            SvgPicture.asset(
-              'assets/icons/bolt.svg',
-              width: 8.85,
-              height: 13.42,
-            ),
+            title == 'Sensor de Energia'
+                ? SvgPicture.asset(
+                    'assets/icons/bolt.svg',
+                    width: 8.85,
+                    height: 13.42,
+                  )
+                : const Icon(
+                    Icons.info_outline,
+                    size: 13.0,
+                  ),
             const SizedBox(width: 9.56),
             Text(
               title,

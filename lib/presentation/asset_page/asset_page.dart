@@ -33,6 +33,7 @@ class _AssetPageState extends State<AssetPage> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         iconTheme: const IconThemeData(
           color: Colors.white,
         ),

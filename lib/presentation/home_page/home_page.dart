@@ -29,6 +29,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: SvgPicture.asset('assets/icons/logo.svg'),
         backgroundColor: const Color(0xFF17192D),
       ),
