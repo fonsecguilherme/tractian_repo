@@ -57,8 +57,6 @@ class CompaniesRepository implements ICompaniesRepository {
           List<AssetModel> assets =
               jsonData.map((asset) => AssetModel.fromMap(asset)).toList();
 
-          print(assets);
-
           return assets;
 
         case HttpStatus.badRequest:
