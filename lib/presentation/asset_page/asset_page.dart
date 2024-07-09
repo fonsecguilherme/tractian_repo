@@ -47,33 +47,25 @@ class _AssetPageState extends State<AssetPage> {
           ),
         ),
       ),
-      body: _buildBody(
-        state,
-        widget.company,
-        store,
+      body: Builder(
+        builder: (context) {
+          if (state is ErrorAssetPageState) {
+            return Center(
+              child: Text(state.errorMessage),
+            );
+          } else if (state is FetchedAssetPageState) {
+            return AssetPageSuccessWidget(
+              company: widget.company,
+              assets: state.assets,
+              store: store,
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
       ),
     );
-  }
-
-  Widget _buildBody(
-    AssetPageState state,
-    CompanyModel company,
-    AssetPageStore store,
-  ) {
-    if (state is ErrorAssetPageState) {
-      return Center(
-        child: Text(state.errorMessage),
-      );
-    } else if (state is FetchedAssetPageState) {
-      return AssetPageSuccessWidget(
-        company: company,
-        assets: state.assets,
-        store: store,
-      );
-    } else {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
   }
 }

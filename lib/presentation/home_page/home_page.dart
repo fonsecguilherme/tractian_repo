@@ -33,23 +33,23 @@ class _HomePageState extends State<HomePage> {
         title: SvgPicture.asset('assets/icons/logo.svg'),
         backgroundColor: const Color(0xFF17192D),
       ),
-      body: _buildBody(state),
+      body: Builder(
+        builder: (context) {
+          if (state is ErrorHomePageState) {
+            return Center(
+              child: Text(state.errorMessage),
+            );
+          } else if (state is FetchedHomePagestate) {
+            return HomePageSuccessWidget(
+              companies: state.companies,
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
     );
-  }
-
-  Widget _buildBody(HomePageState state) {
-    if (state is ErrorHomePageState) {
-      return Center(
-        child: Text(state.errorMessage),
-      );
-    } else if (state is FetchedHomePagestate) {
-      return HomePageSuccessWidget(
-        companies: state.companies,
-      );
-    } else {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
   }
 }
